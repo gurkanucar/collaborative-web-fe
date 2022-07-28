@@ -4,20 +4,36 @@ import { TextEditor } from "../../components/TextEditor/TextEditor";
 import * as io from "socket.io-client";
 import "./CodePage.css";
 
-const socket = io("http://localhost:9092", { reconnection: false });
-
 export const CodePage = (props) => {
+  const [socket, setSocket] = useState();
+
   const [editors, setEditors] = useState({
     html: undefined,
     css: undefined,
     js: undefined,
   });
 
-  const [autoRun, setAutoRun] = useState(false);
+  // const [html, setHtml] = useState("");
+  // const [css, setCss] = useState("");
+  // const [js, setJs] = useState("");
 
-  const [html, setHtml] = useState("");
-  const [css, setCss] = useState("");
-  const [js, setJs] = useState("");
+  const [values, setValues] = useState({
+    html: "",
+    css: "qwe",
+    js: "",
+  });
+
+  useEffect(() => {
+    console.log("values:", values);
+  }, [values]);
+
+  useEffect(() => {
+    const s = io("http://localhost:9092", { reconnection: false });
+    setSocket(s);
+    return () => {
+      s.disconnect();
+    };
+  }, []);
 
   const handleChangesHtml = (delta, oldDelta, source) => {
     if (source !== "user") return;
@@ -25,7 +41,8 @@ export const CodePage = (props) => {
       data: JSON.stringify(delta),
       type: "HTML",
     });
-    setHtml(editors.html.getText());
+    // setHtml(editors.html.getText());
+    setValues({ ...values, html: editors.html.getText() });
   };
 
   const handleChangesCss = (delta, oldDelta, source) => {
@@ -34,7 +51,8 @@ export const CodePage = (props) => {
       data: JSON.stringify(delta),
       type: "CSS",
     });
-    setCss(editors.css.getText());
+    setValues({ ...values, css: editors.css.getText() });
+    // setCss(editors.css.getText());
   };
 
   const handleChangesJs = (delta, oldDelta, source) => {
@@ -43,7 +61,7 @@ export const CodePage = (props) => {
       data: JSON.stringify(delta),
       type: "JS",
     });
-    setJs(editors.js.getText());
+    // setJs(editors.js.getText());
   };
 
   useEffect(() => {
@@ -52,15 +70,17 @@ export const CodePage = (props) => {
       switch (type) {
         case "HTML":
           editors.html.updateContents(JSON.parse(data));
-          setHtml(editors.html.getText());
+          setValues({ ...values, html: editors.html.getText() });
+          // setHtml(editors.html.getText());
           break;
         case "CSS":
           editors.css.updateContents(JSON.parse(data));
-          setCss(editors.css.getText());
+          setValues({ ...values, css: editors.css.getText() });
+          // setCss(editors.css.getText());
           break;
         case "JS":
           editors.js.updateContents(JSON.parse(data));
-          setJs(editors.js.getText());
+          // setJs(editors.js.getText());
           break;
       }
     };
@@ -72,14 +92,6 @@ export const CodePage = (props) => {
     };
   }, [socket]);
 
-  const changeAutoRunState = () => {
-    setAutoRun(!autoRun);
-  };
-  const runFunc = () => {
-    setAutoRun(false);
-    setAutoRun(true);
-    setAutoRun(false);
-  };
   return (
     <div className="code-page">
       <div className="code-page-editors">
@@ -103,14 +115,11 @@ export const CodePage = (props) => {
         />
       </div>
       <div>
-        <button onClick={changeAutoRunState}>
-          {autoRun == true ? "disable autorun" : "enable autorun"}
-        </button>
-        <button onClick={runFunc}>run</button>
         <Emulator
-          html={autoRun ? html : ""}
-          css={autoRun ? css : ""}
-          js={autoRun ? js : ""}
+          // html={autoRun ? html : ""}
+          html={values.html}
+          css={values.css}
+          js={values.js}
         />
       </div>
     </div>
