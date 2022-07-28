@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from "react";
 import "./Emulator.css";
-export const Emulator = () => {
+export const Emulator = (props) => {
   const [srcDoc, setSrcDoc] = useState("");
+  const { html, css, js } = props;
 
-
-  const html = "<h1>Selam!</h1><br/><h1>Selam!</h1><br/><h1>Selam!</h1><br/><h1>Selam!</h1><br/><h1>Selam!</h1><br/>";
-  const css = "";
-  const js = "";
+  // const html = "<h1>Selam!</h1><br/><h1>Selam!</h1><br/><h1>Selam!</h1><br/><h1>Selam!</h1><br/><h1>Selam!</h1><br/>";
+  // const css = "";
+  // const js = "";
 
   useEffect(() => {
-
-    const timeout = setTimeout(() => {
-      setSrcDoc(`
+    // const timeout = setTimeout(() => {
+    setSrcDoc(`
             <html>
-              <body>${html}</body>
-              <style>${css}</style>
-              <script>${js}</script>
+              <body>${html || ""}</body>
+              <style>${css || ""}</style>
+              <script>${js || ""}</script>
             </html>
           `);
-    }, 250);
+    //  }, 250);
 
-    return () => clearTimeout(timeout);
+    // return () => clearTimeout(timeout);
   }, [html, css, js]);
 
   return (
@@ -29,7 +28,7 @@ export const Emulator = () => {
         <iframe
           srcDoc={srcDoc}
           title="output"
-          sandbox="allow-scripts"
+          sandbox="allow-modals allow-forms allow-popups allow-scripts allow-same-origin"
           frameBorder="0"
           width="100%"
           height="100%"
