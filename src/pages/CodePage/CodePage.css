@@ -1,8 +1,0 @@
-.code-page-editors{
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin: 5px;
-}
