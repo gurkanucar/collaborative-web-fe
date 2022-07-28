@@ -1,0 +1,11 @@
+.top-pane {
+  background-color: rgb(21, 177, 169);
+}
+
+.pane {
+  border: solid 2px rgb(21, 177, 169);
+  border-radius: 15px;
+  height: 60vh;
+  display: flex;
+  margin: 5px;
+}
