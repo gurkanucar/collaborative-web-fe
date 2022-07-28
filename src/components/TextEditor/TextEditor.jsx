@@ -4,42 +4,10 @@ import "quill/dist/quill.snow.css";
 
 import "./TextEditor.css";
 
-// const TOOLBAR_OPTIONS = [
-//   [{ header: [1, 2, 3, 4, 5, 6, false] }],
-//   [{ font: [] }],
-//   [{ list: "ordered" }, { list: "bullet" }],
-//   ["bold", "italic", "underline"],
-//   [{ color: [] }, { background: [] }],
-//   [{ script: "sub" }, { script: "super" }],
-//   [{ align: [] }],
-//   ["image", "blockquote", "code-block"],
-//   ["clean"],
-// ];
-
-const TOOLBAR_OPTIONS = [];
 
 export const TextEditor = (props) => {
-  //   const [quill, setQuill] = useState();
 
   const { type, handler, editors, setEditors } = props;
-
-  //   useEffect(() => {
-  //     if (quill == null) return;
-
-  //     const interval = setInterval(() => {
-  //       quill.updateContents({
-  //         ops: [
-  //           {
-  //             insert: "s",
-  //           },
-  //         ],
-  //       });
-  //     }, 1500);
-
-  //     return () => {
-  //       clearInterval(interval);
-  //     };
-  //   }, [quill]);
 
   useEffect(() => {
     if (editors[type] == undefined) return;
