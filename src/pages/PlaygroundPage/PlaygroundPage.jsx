@@ -38,7 +38,7 @@ export const PlaygroundPage = (props) => {
 
   //get project
   useEffect(() => {
-    if (projectID != undefined && socket != undefined) {
+    if (projectID !== undefined && socket !== undefined) {
       socket.emit("project_get", {
         room: projectID,
       });
@@ -59,10 +59,10 @@ export const PlaygroundPage = (props) => {
   //auto saver
   useEffect(() => {
     if (
-      socket == undefined ||
-      html == "loading..." ||
-      css == "loading..." ||
-      js == "loading..."
+      socket === undefined ||
+      html === "loading..." ||
+      css === "loading..." ||
+      js === "loading..."
     )
       return;
     const interval = setInterval(() => {
