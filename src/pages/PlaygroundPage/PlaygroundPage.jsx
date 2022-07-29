@@ -5,31 +5,70 @@ import Pane from "react-split-pane/lib/Pane";
 import * as io from "socket.io-client";
 import "./PlaygroundPage.css";
 import { Emulator } from "../../components/Emulator/Emulator";
+import { useParams } from "react-router-dom";
 
-const socket = io("http://localhost:9092", { reconnection: false });
+const SAVE_INTERVAL_MS = 2000;
 
-export const PlaygroundPage = () => {
+//const socket = io("http://localhost:9092", { reconnection: false,query: "foo=bar"  });
+
+export const PlaygroundPage = (props) => {
   //   const [delayedCodes, setDelayedCodes] = useState("");
+  let { projectID } = useParams();
 
-  // const [values, setValues] = useState({
-  //   html: '<h1 style="color:white;" onclick="myFunction()">Hello! Change Me</h1>',
-  //   css: "body{background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 41%, rgba(0,212,255,1) 100%); text-align:center;}",
-  //   js: "function myFunction() { alert(1)}",
-  // });
+  const [html, setHtml] = useState("loading...");
+  const [css, setCss] = useState("loading...");
+  const [js, setJs] = useState("loading...");
 
-  const [html, setHtml] = useState(
-    '<h1 style="color:white;" onclick="myFunction()">Hello! Change Me</h1>'
-  );
-  const [css, setCss] = useState(
-    "body{background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 41%, rgba(0,212,255,1) 100%); text-align:center;}"
-  );
-  const [js, setJs] = useState("function myFunction() { alert(1)}");
+  const [socket, setSocket] = useState();
+
+  useEffect(() => {
+    const s = io("http://localhost:9092", {
+      reconnection: false,
+      query: "room=" + projectID,
+    });
+    setSocket(s);
+    return () => {
+      s.disconnect();
+    };
+  }, [projectID]);
+
+  useEffect(() => {
+    if (projectID != undefined && socket != undefined) {
+      socket.emit("document_get", {
+        room: projectID,
+      });
+    }
+  }, [projectID, socket]);
+
+  useEffect(() => {
+    if (
+      socket == undefined ||
+      html == "loading..." ||
+      css == "loading..." ||
+      js == "loading..."
+    )
+      return;
+
+    const interval = setInterval(() => {
+      socket.emit("document_save", {
+        room: projectID,
+        html: html,
+        css: css,
+        js: js,
+      });
+    }, SAVE_INTERVAL_MS);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [socket, html, css, js]);
 
   const onHtmlChange = (value) => {
     // setValues({ ...values, html: value });
     setHtml(value);
     socket.emit("document_write", {
       data: value,
+      room: projectID,
       type: "HTML",
     });
   };
@@ -39,6 +78,7 @@ export const PlaygroundPage = () => {
     setCss(value);
     socket.emit("document_write", {
       data: value,
+      room: projectID,
       type: "CSS",
     });
   };
@@ -48,6 +88,7 @@ export const PlaygroundPage = () => {
     setJs(value);
     socket.emit("document_write", {
       data: value,
+      room: projectID,
       type: "JS",
     });
   };
@@ -72,10 +113,19 @@ export const PlaygroundPage = () => {
       }
     };
 
+    const document_retreive = (data) => {
+      const jsonData = JSON.parse(data);
+      setHtml(jsonData.html);
+      setCss(jsonData.css);
+      setJs(jsonData.js);
+    };
+
     socket.on("document_read", document_handler);
+    socket.on("document_retrieved", document_retreive);
 
     return () => {
       socket.off("document_read", document_handler);
+      socket.off("document_retrieved", document_retreive);
     };
   }, [socket]);
 
