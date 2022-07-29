@@ -10,9 +10,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="project" element={<PlaygroundPage />}>
-          <Route path=":projectID" element={<PlaygroundPage />} />
-        </Route>
+        <Route path="project/:projectID" element={<PlaygroundPage />} />
       </Routes>
     </BrowserRouter>
   );
