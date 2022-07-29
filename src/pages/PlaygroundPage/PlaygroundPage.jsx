@@ -41,6 +41,8 @@ export const PlaygroundPage = (props) => {
     }
   }, [projectID, socket]);
 
+
+  //auto saver
   useEffect(() => {
     if (
       socket == undefined ||
@@ -49,7 +51,6 @@ export const PlaygroundPage = (props) => {
       js == "loading..."
     )
       return;
-
     const interval = setInterval(() => {
       socket.emit("project_save", {
         room: projectID,
@@ -66,28 +67,24 @@ export const PlaygroundPage = (props) => {
 
   const onHtmlChange = (value) => {
     setHtml(value);
-    socket.emit("project_write", {
-      data: value,
-      room: projectID,
-      type: "HTML",
-    });
+    notifyChange(value, "HTML");
   };
 
   const onCssChange = (value) => {
     setCss(value);
-    socket.emit("project_write", {
-      data: value,
-      room: projectID,
-      type: "CSS",
-    });
+    notifyChange(value, "CSS");
   };
 
   const onJsChange = (value) => {
     setJs(value);
+    notifyChange(value, "JS");
+  };
+
+  const notifyChange = (value, type) => {
     socket.emit("project_write", {
       data: value,
       room: projectID,
-      type: "JS",
+      type: type,
     });
   };
 
