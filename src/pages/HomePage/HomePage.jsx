@@ -1,18 +1,34 @@
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 
-import "./HomePage.css"
+import "./HomePage.css";
 
 export const HomePage = () => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [projectID, setProjectID] = useState("");
 
-    useEffect(() => {
-     navigate("/project")
-    }, [])
-    
+  const createNewProject = () => {
+    navigate("/project/" + uuidv4());
+  };
+
+  const openProject = (e) => {
+    if (projectID == "") return;
+    navigate("/project/" + projectID);
+  };
 
   return (
-    <div>HomePage</div>
-  )
-}
+    <div>
+      <button onClick={createNewProject}>Create New</button>
+      <div>
+        <input
+          onChange={(e) => setProjectID(e.target.value)}
+          value={projectID}
+          placeholder="project id"
+        />
+        <button onClick={openProject}>Open Project</button>
+      </div>
+    </div>
+  );
+};
