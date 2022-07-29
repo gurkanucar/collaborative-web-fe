@@ -3,9 +3,13 @@
 ### Used Packages
 
 **SocketIO:** socket io client (must be version 2)
+
 **React Router v6**: routing package
+
 **uuid4**: generate random uuid
+
 **react-codemirror2 and codemirror**: code editor
+
 **react-split-pane**: resizable divs
 
 
