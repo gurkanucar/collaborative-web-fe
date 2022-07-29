@@ -12,7 +12,6 @@ const SAVE_INTERVAL_MS = 2000;
 //const socket = io("http://localhost:9092", { reconnection: false,query: "foo=bar"  });
 
 export const PlaygroundPage = (props) => {
-  //   const [delayedCodes, setDelayedCodes] = useState("");
   let { projectID } = useParams();
 
   const [html, setHtml] = useState("loading...");
@@ -21,6 +20,7 @@ export const PlaygroundPage = (props) => {
 
   const [socket, setSocket] = useState();
 
+  //connect to socket
   useEffect(() => {
     const s = io("http://localhost:9092", {
       reconnection: false,
@@ -32,9 +32,10 @@ export const PlaygroundPage = (props) => {
     };
   }, [projectID]);
 
+  //get project
   useEffect(() => {
     if (projectID != undefined && socket != undefined) {
-      socket.emit("document_get", {
+      socket.emit("project_get", {
         room: projectID,
       });
     }
@@ -50,7 +51,7 @@ export const PlaygroundPage = (props) => {
       return;
 
     const interval = setInterval(() => {
-      socket.emit("document_save", {
+      socket.emit("project_save", {
         room: projectID,
         html: html,
         css: css,
@@ -64,9 +65,8 @@ export const PlaygroundPage = (props) => {
   }, [socket, html, css, js]);
 
   const onHtmlChange = (value) => {
-    // setValues({ ...values, html: value });
     setHtml(value);
-    socket.emit("document_write", {
+    socket.emit("project_write", {
       data: value,
       room: projectID,
       type: "HTML",
@@ -74,9 +74,8 @@ export const PlaygroundPage = (props) => {
   };
 
   const onCssChange = (value) => {
-    //setValues({ ...values, css: value });
     setCss(value);
-    socket.emit("document_write", {
+    socket.emit("project_write", {
       data: value,
       room: projectID,
       type: "CSS",
@@ -84,9 +83,8 @@ export const PlaygroundPage = (props) => {
   };
 
   const onJsChange = (value) => {
-    // setValues({ ...values, js: value });
     setJs(value);
-    socket.emit("document_write", {
+    socket.emit("project_write", {
       data: value,
       room: projectID,
       type: "JS",
@@ -95,7 +93,7 @@ export const PlaygroundPage = (props) => {
 
   useEffect(() => {
     if (socket == null) return;
-    const document_handler = ({ data, type }) => {
+    const project_read = ({ data, type }) => {
       // setValues({ ...values, [type.toLowerCase()]: data });
       switch (type) {
         case "HTML":
@@ -113,35 +111,21 @@ export const PlaygroundPage = (props) => {
       }
     };
 
-    const document_retreive = (data) => {
+    const project_retrieve = (data) => {
       const jsonData = JSON.parse(data);
       setHtml(jsonData.html);
       setCss(jsonData.css);
       setJs(jsonData.js);
     };
 
-    socket.on("document_read", document_handler);
-    socket.on("document_retrieved", document_retreive);
+    socket.on("project_read", project_read);
+    socket.on("project_retrieved", project_retrieve);
 
     return () => {
-      socket.off("document_read", document_handler);
-      socket.off("document_retrieved", document_retreive);
+      socket.off("project_read", project_read);
+      socket.off("project_retrieved", project_retrieve);
     };
   }, [socket]);
-
-  //   useEffect(() => {
-  //     const timeout = setTimeout(() => {
-  //       setDelayedCodes(`
-  //           <html>
-  //             <body>${html}</body>
-  //             <style>${css}</style>
-  //             <script>${js}</script>
-  //           </html>
-  //         `);
-  //     }, 250);
-
-  //     return () => clearTimeout(timeout);
-  //   }, [html, css, js]);
 
   return (
     <div className="playground">
