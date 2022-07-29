@@ -6,6 +6,7 @@ import * as io from "socket.io-client";
 import "./PlaygroundPage.css";
 import { Emulator } from "../../components/Emulator/Emulator";
 import { useParams } from "react-router-dom";
+import { BASE_URL } from "../../constants";
 
 const SAVE_INTERVAL_MS = 2000;
 const RUN_INTERVAL_MS = 1200;
@@ -25,7 +26,7 @@ export const PlaygroundPage = (props) => {
 
   //connect to socket
   useEffect(() => {
-    const s = io("http://localhost:9092", {
+    const s = io(BASE_URL, {
       reconnection: false,
       query: "room=" + projectID,
     });
