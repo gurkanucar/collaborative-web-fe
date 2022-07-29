@@ -8,6 +8,7 @@ import { Emulator } from "../../components/Emulator/Emulator";
 import { useParams } from "react-router-dom";
 
 const SAVE_INTERVAL_MS = 2000;
+const RUN_INTERVAL_MS = 1200;
 
 //const socket = io("http://localhost:9092", { reconnection: false,query: "foo=bar"  });
 
@@ -17,6 +18,8 @@ export const PlaygroundPage = (props) => {
   const [html, setHtml] = useState("loading...");
   const [css, setCss] = useState("loading...");
   const [js, setJs] = useState("loading...");
+
+  const [delayedCodes, setDelayedCodes] = useState({ html, css, js });
 
   const [socket, setSocket] = useState();
 
@@ -41,6 +44,16 @@ export const PlaygroundPage = (props) => {
     }
   }, [projectID, socket]);
 
+  //delayed auto run codes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDelayedCodes({ html, css, js });
+    }, RUN_INTERVAL_MS);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [html, css, js]);
 
   //auto saver
   useEffect(() => {
@@ -153,7 +166,7 @@ export const PlaygroundPage = (props) => {
         </Pane>
       </SplitPane>
 
-      <Emulator values={{ html, css, js }} />
+      <Emulator values={delayedCodes} />
     </div>
   );
 };
