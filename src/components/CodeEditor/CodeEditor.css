@@ -16,6 +16,7 @@
   color: white;
   padding: 0.5rem 0.5rem 0.5rem 1rem;
   border-radius: 10px 10px 0px 0px;
+  font-weight: 700;
 }
 
 .CodeMirror {
