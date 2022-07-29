@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "../../components/Button/Button";
@@ -16,7 +16,7 @@ export const HomePage = () => {
   };
 
   const openProject = (e) => {
-    if (projectID == "") return;
+    if (projectID === "") return;
     navigate("/project/" + projectID);
   };
 
