@@ -17,7 +17,14 @@ export const HomePage = () => {
 
   const openProject = (e) => {
     if (projectID === "") return;
-    navigate("/project/" + projectID);
+    navigate("/project/" + clearUrl(projectID));
+  };
+
+  const clearUrl = (value) => {
+    if (value.includes("project/")) {
+      return value.split("project/")[1];
+    }
+    return value;
   };
 
   return (
@@ -31,7 +38,7 @@ export const HomePage = () => {
           <InputComponent
             onChange={(e) => setProjectID(e.target.value)}
             value={projectID}
-            placeholder="project id"
+            placeholder="project id or url"
           />
           <Button text={"Open Project"} onClick={openProject} />
         </div>
