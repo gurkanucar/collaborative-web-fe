@@ -1,4 +1,4 @@
-# Post Sharing with Push Notifs - Frontend
+# Collaborative Web Development Project - Frontend
 
 ### Used Packages
 
